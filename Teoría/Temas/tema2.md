@@ -144,6 +144,97 @@ La comunicación en Internet precisa de direcciones IP asociadas a las interface
 
     Goliat.ugr.es ← → 150.214.20.3
 
+Para que DNS funcione, debe existir una gran base de datos que albergue a qué IP's pertenecen los nombres de dominio y viceversa, para poder hacer la traducción. Tener esta base de datos centralizada supondría que todo el tráfico que hay en internet fuera a esta base de datos, ralentizando muchísimo el servicio y suponiendo un mantenimiento de esta base datos casi imposible. Para hacer esta traducción sostenible, DNS hace uso de una gran cantidad de servidores distribuidos por el mundo para mapear los hosts de Internet. Estos servidores son:
+
+    - **Servidores raíz “.”**: Este tipo de servidores se encargan de resolver una petición para lacresolución de un nombre y devuelve una lista de los servidores TLD que son capaces decresolver la petición.
+
+    - **Servidores de dominio (TDL)**: Estos servidores se encargan de los dominios de más alto nivel como .com, .net, etc.. Se encargan de resolver la petición DNS que le ha enviado el servidor root, y si no son capaces de hacerlo, darán la dirección del servidor autorizado capaz de resolver esta traducción.
+
+    - **Servidores locales**: Un servidor local es aquel que tiene cada proveedor de internet, red de universidad... (ISP) posee un servidor local que resolverá todas las peticiones DNS que pertenecen a su dominio.
+
+La **resolución** o búsqueda del objetivo se puede realizar de dos formas diferentes:
+
+  - **Iterativa**: en este caso, cuando se realiza una consulta DNS y el servidor no la puede responder, este le pide al servidor que puede resolver la consulta que la resuelva y se la de al host que ha realizado la consulta inicial.
+  - **Recursiva**: el host que realiza la consulta se la manda a un servidor. Si este no la puede resolver, se la realizará a otro, y este a otro si no la puede resolver, y así sucesivamente.
+
+    Además el se presenta el uso de caché: el host realiza la petición al servidor local, este mira en caché y si puede responder, responde y si no, le envía la consulta a otro servidor remoto.
+
+### 2.1 Gestión de la base de datos distribuida y jerárquica
+La BD está formada por un conjunto de servidores cooperativos que almacenan parcialmente la base de datos _BIND_. Cada servidor es responsable de lo que se denomina ZONA. Una zona es un conjunto de nombres de dominio contiguos de los que el servidor tiene toda la información y es su autoridad. Los servidores autoridad deben contener toda (no "cacheada") la información de su zona. La autoridad puede delegarse jerárquicamente a otros servidores. Cada zona debe tener al menos un servidor de autoridad.◦ En cada zona hay servidores primarios (copia de la BD) y secundarios (obtiene la BD por transferencia). Existe un servicio caché para mejorar prestaciones. Cuando un cliente solicita una resolución de nombres a su servidor puede ocurrir:
+
+  - **Respuesta CON autoridad**: el servidor tiene autoridad sobre la zona en la que se encuentra el nombre solicitado y devuelve la dirección IP.
+  - **Respuesta SIN autoridad**: el servidor no tiene autoridad sobre la zona en la que se encuentra el nombre solicitado, pero lo tiene en la cache.
+  - **No conoce la respuesta**: el servidor preguntará a otros servidores de forma recursiva o iterativa. Normalmente se “eleva” la petición a uno de los servidores raíz.
+
+### 2.2 ¿Cómo es la BD DNS?
+Todo el dominio está asociado a un registro Resourse Record. Cada RR es una tupla con 5 campos:
+  - Nombre del dominios
+  - Tiempo de vida: tiempo de validez de un registro para la caché.
+  - Clase: en internet siempre IN.
+  - Tipo: tipo de registro. Donde estos pueden ser:
+    - SOA: Registro con la autoridad de la zona.
+    - NS: Registro que contiene un servidor de nombres.
+    - A: Registro que define una dirección IP.
+    - MX: Registro que define un servidor de correo elect.
+    - CNAME: Registro que define el nombre canónico de un nombre de dominio.
+    - HINFO: Información del tipo de máquina y sistema operativo.
+    - TXT: Información del dominio.
+  -Valor: contenido que depende del campo tipo.
+
+Existe una BD asociada de resolución inversa para traducir direcciones IP en nombres de dominio. Los formatos de los mensajes DNS son:
+
+  ![imagen]()
+
+Nota: DNS se ofrece en el puerto 53 mediante UDP normalmente o TCP (para respuestas grandes > 512 bytes).
+
+
+## 3. Navegación web
+La navegación Web consiste en pedir una información a un servidor, y este nos la devuelve de forma que nuestro navegador sea capaz de interpretarla. Esta información puede ser texto (denominado hipertexto y puede contener enlaces a otras páginas, denominándose hiperenlaces), imágenes, audio, vídeo...
+
+Esta información se concentra en un fichero HTML que conforma el esqueleto de la página, siendo esto lo primero que mira el navegador que interpreta el código. A continuación puede mirar las
+páginas de estilo asociadas, imágenes, audio...
+
+### 3.1 Protocolo HTTP.
+Se implementa en dos programas, utilizando la arquitectura cliente-servidor.
+  - Cliente: Es nuestro navegador web, que realiza peticiones de objetos y los muestra.
+  - Servidor: Atiende las peticiones que le llegan y envía los objetos que son solicitados.
+
+Posee las siguientes **caracteristicas**:
+  - Se basa en conexiones TCP al puerto 80, iniciando el cliente la conexión TCP para solicitar datos, y el servidor la recibe en la interfaz del socket asociado. Entonces el servidor, envía por ese socket la información que le han solicitado y cierra la conexión TCP, recibiendo el cliente la información pedida.
+
+  - Es un protocolo “stateless'', esto significa que el servidor (en principio), no guarda ninguna información del cliente, por lo que no guarda el estado del cliente, ni ningúntipo de información respecto a él. Esto se debe a que si se guardara la información de los clientes, sería imposible almacenar este tipo de información. Para ello se usan las cookies, que almacenan la información del cliente en el propio cliente.
+
+HTTP se divide en dos tipos:
+No persistente → Se envía únicamente un objeto en cada conexión TCP, es decir, cuando ha terminado de enviar el objeto cierra la conexión TCP. Es decir, se abriría una conexión para pedir el html, otra para pedir la hoja de estilos, etc.
+
+  - **No persistente** → Se envía únicamente un objeto en cada conexión TCP, es decir, cuando ha terminado de enviar el objeto cierra la conexión TCP. Es decir, se abriría una conexión para pedir el html, otra para pedir la hoja de estilos, etc.
+  - **Persistente** → Se pueden enviar varios objetos a través del socket en una misma conexión TCP entre el cliente y el servidor.
+
+NOTA: Lo que realmente hacen los navegadores es lanzar conexiones persistentes, así, cuando pedimos una página web con nuestro navegador, éste no lanza un sólo cliente con un sólo socket al puerto x sino “tres o cuatro'': con el primero pide la página web y con el resto, las imágenes, videos, etc. Los navegadores están muy optimizados en este aspecto.
+
+Existen disferentes **tipos de mensajes** para HTTP:
+  - Request:
+    - GET manda toda la información en forma de path, cuando por ejemplo pedimos un determinado archivo de la página, lo hacemos mandando información de su path.
+    - POST toda la información que mandamos aparece en la sección extra carriage return, line feed.
+    - HEAD se usa para comprobar la configuración del servidor, es decir, aunque pidamos un determinado objeto del servidor, el servidor contestará como si lo hubiese enviado pero sin enviarlo.
+
+  - Response:
+
+## 4. El correo electrónico.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
