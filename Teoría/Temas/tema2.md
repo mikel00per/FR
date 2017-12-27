@@ -146,11 +146,11 @@ La comunicación en Internet precisa de direcciones IP asociadas a las interface
 
 Para que DNS funcione, debe existir una gran base de datos que albergue a qué IP's pertenecen los nombres de dominio y viceversa, para poder hacer la traducción. Tener esta base de datos centralizada supondría que todo el tráfico que hay en internet fuera a esta base de datos, ralentizando muchísimo el servicio y suponiendo un mantenimiento de esta base datos casi imposible. Para hacer esta traducción sostenible, DNS hace uso de una gran cantidad de servidores distribuidos por el mundo para mapear los hosts de Internet. Estos servidores son:
 
-    - **Servidores raíz “.”**: Este tipo de servidores se encargan de resolver una petición para lacresolución de un nombre y devuelve una lista de los servidores TLD que son capaces decresolver la petición.
+  - **Servidores raíz “.”**: Este tipo de servidores se encargan de resolver una petición para lacresolución de un nombre y devuelve una lista de los servidores TLD que son capaces decresolver la petición.
 
-    - **Servidores de dominio (TDL)**: Estos servidores se encargan de los dominios de más alto nivel como .com, .net, etc.. Se encargan de resolver la petición DNS que le ha enviado el servidor root, y si no son capaces de hacerlo, darán la dirección del servidor autorizado capaz de resolver esta traducción.
+  - **Servidores de dominio (TDL)**: Estos servidores se encargan de los dominios de más alto nivel como .com, .net, etc.. Se encargan de resolver la petición DNS que le ha enviado el servidor root, y si no son capaces de hacerlo, darán la dirección del servidor autorizado capaz de resolver esta traducción.
 
-    - **Servidores locales**: Un servidor local es aquel que tiene cada proveedor de internet, red de universidad... (ISP) posee un servidor local que resolverá todas las peticiones DNS que pertenecen a su dominio.
+  - **Servidores locales**: Un servidor local es aquel que tiene cada proveedor de internet, red de universidad... (ISP) posee un servidor local que resolverá todas las peticiones DNS que pertenecen a su dominio.
 
 La **resolución** o búsqueda del objetivo se puede realizar de dos formas diferentes:
 
@@ -210,7 +210,7 @@ No persistente → Se envía únicamente un objeto en cada conexión TCP, es dec
   - **No persistente** → Se envía únicamente un objeto en cada conexión TCP, es decir, cuando ha terminado de enviar el objeto cierra la conexión TCP. Es decir, se abriría una conexión para pedir el html, otra para pedir la hoja de estilos, etc.
   - **Persistente** → Se pueden enviar varios objetos a través del socket en una misma conexión TCP entre el cliente y el servidor.
 
-NOTA: Lo que realmente hacen los navegadores es lanzar conexiones persistentes, así, cuando pedimos una página web con nuestro navegador, éste no lanza un sólo cliente con un sólo socket al puerto x sino “tres o cuatro'': con el primero pide la página web y con el resto, las imágenes, videos, etc. Los navegadores están muy optimizados en este aspecto.
+NOTA: Lo que realmente hacen los navegadores es lanzar conexiones persistentes, así, cuando pedimos una página web con nuestro navegador, éste no lanza un sólo cliente con un sólo socket al puerto x sino "tres o cuatro": con el primero pide la página web y con el resto, las imágenes, videos, etc. Los navegadores están muy optimizados en este aspecto.
 
 Existen disferentes **tipos de mensajes** para HTTP:
   - Request:
@@ -222,24 +222,102 @@ Existen disferentes **tipos de mensajes** para HTTP:
 
 ## 4. El correo electrónico.
 
+Los componentes principales son:
+
+  - Cliente de correo (user agent) y Servidor de correo (mail server): son los dos agentes que intervienen (el remitente y el/los destinatario/s del correo) y los servidores. Por cada origen y cada destino, hay un cliente y un servidor.
+
+  - Simple Mail Tranfer Protocol SMTP: es el protocolo utilizado para enviar correo electrónico, los otros protocolos de descarga que intervienen son POP3, IMAP, HTTP. SMTP se usa entre los servidores de correo electronico, sin embargo POP3 e IMAP se usan cuando el servidor y cliente inician sesión.
+
+Caracteristicas del protocolo SMTP: (implenta dos programas)
+
+  - Cliente SMTP: el servidor actúa como cliente cuando recibe un correo y tiene que reenviarlo a otro servidor. Para ello activa un puerto dinámico que se conectará con el puerto 25 del destino, y enviará el correo a través de esa conexión.
+  - Servidor SMTP: cuando enviamos un correo, el servidor SMTP está escuchando peticiones en el puerto 25.
+  - Se utiliza el protocolo TCP, lo cual tiene sentido porque TCP es el protocolo fiable de la capa de transporte y todos los servicios que no quieren perder ni un sólo carácter de la información que están enviando lo usan.
+  - Es orientado a conexión, in-band y state-full, consta de 3 fases:
+    - Handshaking (“saludo”), parte inicial de la conexión.
+    - Transferencia de mensajes.
+    - Cierre.
+  - Los mensajes deben estar codificados en ASCII de 7 bits → Extensiones MIME, que sirven para añadir otro tipo de codificación, sobre todo en los archivos adjuntos.
+
+Los pasos en el envio/recepción son:
+  ![envio/recepción correo](https://)
+
+### 4.1 Otros protocolos usados
+
+  - Protocolos de acceso (POP3): El protocolo POP3, al igual que SMTP, tiene una fase de conexión, una de servicio y otra de
+cierre.
+    - **Fase de autorización**: El cliente se identifica con su nombre de usuario y contraseña, y el servidor le responde con +OK o -ERR en función de los datos introducidos.
+    - **Fase de transacción**: Fase en la cual se listan los correos que hay, podemos operar con ellos mediante un índice... Cuando se usa POP3 tras leer un correo se elimina, ya que POP3 no está preparado para guardar correos a largo plazo, para eso se usa IMAP.
+    - **Fase de actualización**: Se pasa a esta fase cuando se cierra la conexión, en esta fase es cuando el servidor realmente borra los correos que le hemos indicado, leído...
+
+  - Ventajas de IMAP4 frente a POP3:
+    - **Permite organización en carpetas** en el lado del servidor (MTA)
+    - **Mantiene información entre sesiones**. Guarda los correos en el servidor.
+    - Permite la descarga de partes de los mensajes.
+    - **Se puede acceder con varios clientes** (POP también, pero en modo descargar y guardar).
+
+  - Ventajas de Web MAIL frente a POP3
+    - **Organización** total en el servidor, accesible desde cualquier cliente con HTTP. El agente de correo está integrado en el servidor web.
+    - **Seguridad**: uso extendido de HTTPS. Los emails se envían encriptados.
 
 
+## 5. Seguridad y protocolos seguros
+Existen una serie de primitivas de seguridad:
+  - Confidencialidad: es lo primero que pensamos cuando hablamos de seguridad, que sólo
+pueda acceder a la información la persona que queremos que acceda. Para ello, la
+medida más típica es la criptografía.
+  - Responsabilidad:
+    - Autenticación: debemos poder identificar a los agentes que participan en la comunicación.
+    - No repudio: No se puede negar el autor de una determinada acción.
+    - Control de accesos: cuando se accede a una red, para tener cierta seguridad, debemos identificar quién se ha conectado, desde qué dispositivo, etc.
+  - Integridad: Detección de alteraciones (intencionalidad o no) de la información.
+  - Disponibilidad: Mantener las prestaciones de los servicios con independencia de la demanda.
+
+Existen pues, distintos tipos de seguridad:
+  - Cifrado Simétrico: la idea básica del cifrado simétrico es que se usa la misma clave tanto para encriptar como para desencriptar. Dicha clave sólo puede ser sabida por el destinatario y el remitente del mensaje. Los más usados son 3DES y AES. El problema de este sistema es cómo transmitir la clave al destinatario del mensaje sin que ésta sea capturada por una tercera persona.
+    - C = K(P) & P = K(C)
+    - DES, 3DES, AES, RC4
+
+  - Cifrado Asimétrico: Este tipo de cifrado usa una clave distinta para encriptar como para desencriptar. Éste par de claves se generan a partir de un algoritmo y tienen una característica especial: a partir de la clave pública es imposible inferir la privada y viceversa, así, si alguien dispone del texto cifrado y nuestra clave pública no podrá hacer nada. Para poder transmitir un mensaje usando cifrado asimétrico, el destinatario del mensaje debe, en primer lugar, decirnos su clave pública. Así, para hacer una comunicación segura a través de internet, en primer lugar le enviamos al destinatario (usando cifrado asimétrico) la clave simétrica usada para cifrar y a partir de ahí nos comunicamos usando cifrado simétrico que es mucho más rápido que el asimétrico. El secreto de la clave pública y privada es que con un ordenador actual nos llevaría años poder obtener una a partir de la otra.
+    - C = K + (P) & P = K - (C)
+    - Diffie & Hellman, RSA
+
+  - Funciones Hash: es una función computable mediante un algoritmo tal que: H: U → M. x → h(x) Tiene como entrada un conjunto de elementos, que suelen ser cadenas, y los convierte en un rango de salida finito, normalmente cadenas de longitud fija.
+
+  - Message Authentication: se usa para evitar que alguien pueda modificar los mensajes que mandamos. No se debe confundir con la dirección MAC de una tarjeta de red. Es una porción de información utilizada para autenticar un mensaje. Los valores MAC se calculan mediante la aplicación de una función hash criptográfica con clave secreta K, que sólo conocen el remitente y destinatario, pero no los atacantes.
+    - Code: M | F(M,K)
+    - MD5, SHA-1, ...
+
+  - Firma Digital: sirve para autenticar la autoría de un documento. Es igual que firmar un documento en papel con nuestra firma, pero digitalmente. El procedimiento para firmar el documento consiste en hacer un hash del documento usando la clave privada, ya que la clave privada es algo que sólo tiene la persona que firma el documento. Usando la clave pública de dicha persona se podría comprobar que efectivamente fue ella la que firmó el documento desencriptando el hash. Sin embargo, no podemos asegurar que la firma digital esté asociada a la identidad de una persona ya que cualquiera puede afirmar ser una persona y en realidad, ser otra muy distinta. Para solucionar esto necesitamos un tercer agente en la comunicación que verifique la identidad de dicha clave pública, este tercer agente se llama entidad certificadora.
+    - M | F(M, K⁻) -comprobación con K +
+
+  - Certificado: que no son más que la asociación entre una identidad y una clave pública. Para poder tener un certificado tenemos que ir a la entidad certificadora con nuestro DNI y nuestra clave pública. La autoridad certificadora hace una firma digital con su clave privada y se comprueba dicho certificado con la clave púbica de la entidad certificadora. Esto se hace automáticamente cuando hacemos accesos por HTTPS, se usa para comprobar que la página es quien dice ser y no estamos siendo víctimas del phishing.
+    - (ID + K + ) | F((ID + K + ), K -CA )
 
 
+## 6. Aplicaciones multimedia.
 
+  - Conceptos:
+    - Aplicaciones multimedia: son aplicaciones que tienen que ver con el audio y el video.
+    - Calidad de servicio (QoS): capacidad de ofrecer el rendimiento requerido para una aplicación. Por ejemplo, si se ha podido ver bien un video o no.
 
+  - Tipos de aplicaciones:
+    - Flujo de audio y vídeo (streaming) almacenado → YouTube. (el delay debe ser mínimo).
+    - Flujo de audio y vídeo en vivo → emisoras de radio o IPTV. (se puede permitir un poco de delay).
+    - Audio y vídeo interactivo → Skype. (nada de delay ya que podemos perder información).
 
+  - Características fundamentales:
+    - Elevado ancho de banda.
+    - Tolerantes relativamente a la pérdida de datos (que el usuario no se dé cuenta pero que no se le corte el vídeo).
+    - Exigen Delay acotado, no hay problema con que tengamos un buffer intermedio en el que ir guardando información, pero si hay tanto delay que en un momento dado el buffer está lleno empieza a haber desconexiones y el video va entrecortado.
+    - Exigen Jitter acotado, variación del Delay.
+    - Uso de multicast, es una difusión en internet, imitando el comportamiendo de las emisiones de radio o televisión, donde desde una antena emisora se manda la misma señal a todas las antenas, no mandan una señal a cada casa.
 
+## 7. Aplicaciones para interconectividad de redes locales
 
+  - DHCP -> asignación dinámica de IP. Evitar hacer una configuración manual de IP. No se usa solo con direccionamiento privado, lo utilizan también los ISP, para minimizar el número de IPs que se utilizan, además de que cuestan finero por lo tanto gastas menos dinero. Una tarjeta de red de solo pasar los paquetes qye ke ubterese¡ab a ese ordenador, salvo en las direcciones broadcast. Si el paquete es broadcast todos lo abren para ver su contenido. Se utiliza cuando no sabemos la IP del destino.
 
+  - DHCPOFFER -> es con lo que se responde a la petición del cliente DHCP. En la línea de tiempo se añaden dos paquetes más (siendo todos broadcast) para que si hay otros servidores se sepa que ya no tiene que darle una IP, y se mandan como broadcast para que se sepa que el cliente ha requerido al otro.El identificador sirve para solventar problemas cuando hay varios clientes a la vez
+  queriendo la IP.
 
-
-
-
-
-
-
-
-
-
--
+  - DunDNS -> servicios que permiten introducir detrás de un router la instalación de servidores que son accesibles desde fuera pero no al revés. Estos sirven para que si nuestra IP cambia cambiemos nuestros servicio siga en activo por un nombre de dominio.
