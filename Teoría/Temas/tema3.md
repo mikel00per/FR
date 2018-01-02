@@ -11,7 +11,7 @@ Hasta ahora siempre hemos hablado de dispositivos (Servidor y Cliente), dentro d
 ## 2. Protocolo de datagrama de usuario (UDP)
 UDP, podemos decir que prácticamente lo único que hace es utilizar los puertos, ya que es un servicio no orientado a conexión, no fiable, etc. es decir, no implementa casi funcionalidad alguna. Por tanto, UDP es un protocolo best-effort, ya que intentará que el paquete llegue a su destino, pero si no llega no se preocupa en realizar el reenvío del paquete.
 
-  ![UDP](https://)
+  ![UDP](./img1-tema3.png)
 
 Como vemos tenemos 8 bytes distribuidos en 4 campos de dos bytes cada uno donde tenemos en primer el puerto origen, el puerto destino, la longitud UDP del datagrama.
 
@@ -31,7 +31,7 @@ Mecanismo de detección y recuperación de errores (ARQ):
 
 La incorporación de confirmaciones (piggybacking) minimiza el número de paquetes enviados de señalización de control, con esta técnica, en vez de enviar ACK en un paquete individual, éste es incluido dentro del próximo paquete a enviar.
 
-  ![TCP](https://)
+  ![TCP](img2-tema3.png)
 
 El principio es el mismo que en UDP: puerto origen y puerto destino, tras esto tenemos dos números de secuencia:
   - Número de secuencia, para llevar la cuenta de los paquetes enviados.
@@ -50,7 +50,7 @@ Cada segmento TCP se encapsula en un datagrama IP.
 ### 3.2 Control de la conexión (TCP)
 Implica un inicio de la conexión y una desconexión, entre medias de ambos se realiza el envío de datos. En la handshake vemos el esquema de conexión inicial en TCP. Dicho diagrama se denomina three way handshake porque casi siempre se utilizan tres segmentos: uno del origen al destino, otro del destino al origen y otro final del origen al destino. En resumen, se usan tres paquetes para iniciar la conexión.
 
-  ![ack](https://)
+  ![ack](img3-tema3.png)
 
 En un primer paquete se inicializa el número de secuencia (con un número pseudo-aleatorio que sea difícil de predecir para no tener problemas con distintos tipos de conexiones, por ejemplo al iniciar varias conexiones en paralelo que es lo que hacemos al iniciar un navegador web) que irá en la dirección destino-origen y se inicializa el flag SYN (sincronización) a uno. Tras esto, el sistema operativo asigna un puerto a la conexión y se envía dicho paquete sin payload, ya que no es más que un paquete de control.
 
@@ -74,7 +74,7 @@ Cuando dicho segmento llega al destino, éste lo confirma y si quiere cerrar tam
 ### 3.4 Autómata de estados finitos TCP
 Cada nodo representa un estado en el que puede estar cualquiera de los dos fines de TCP (tanto cliente como servidor). Sobre cada flecha que une dos nodos vemos una / que separa las acciones que hace cada parte para cambiar de estado, si vemos un símbolo “-” significa que esa parte no ha hecho nada para cambiar de estado sino que cambia de estado por una acción realizada por la otra parte.
 
-  ![automata_tcp](https://)
+  ![automata_tcp](img4-tema3.png)
 
   1. En el lado del cliente, el que inicia la conexión, se envia en primer lugar un syn (estado SYN_SENT), tras esto, esperará un segmento con syn + ack y finalmente, mandará un ack, pasando al estado ESTABLISHED tras el cual podemos empezar a mandar datos. Este proceso sería una apertura activa.
 
@@ -92,7 +92,7 @@ Sería natural pensar que TCP, al enviar un segmento, espera a recibir la confir
 
 Escenarios de la transmisión:
 
-  ![escenarios](https://)
+  ![escenarios](img5-tema3.png)
 
   1. Caso izquierda: En el caso de la izquierda, Host A está enviando un segmento de 8 bytes de longitud. El número de secuencia que se ve es el segmento por el que va en ese momento, el número de secuencia se puede haber inicializado a 91, por eso espera el 92. Cuando Host B recibe el paquete, realiza el checksum, para ver que no hay problemas y responde con un ack indicando el siguiente segmento que espera (en este caso, 92 + 8, es decir, Seq + NumBytes = 100). Si se pierde ese ack, se acabará el timeout y el emisor volverá a mandar el segmento. Entonces, Host B verá que es lo mismo que ha recibido antes y volverá a mandar el ack. En este escenario estámos mandando una ventana de un único segmento, por lo que cuando llegue el ack se enviará el siguiente incrementándose el número de secuencia.
 
@@ -108,7 +108,7 @@ Es algo que hay que estimar en función de la velocidad de red, por lo tanto deb
 ### 3.6 Control de flujo
 El objetivo del control de flujo era no saturar al receptor (evitar unbuffer overfow), para implementar esto el receptor avisa al emisor de cuando está dispuesto a recibir datos. La información que puede recibir el receptor se mide en créditos: si el receptor puede recibir 4KB, el crédito será de 4KB y si no puede recibir nada, el crédito será de 0KB y se detendría el envío de datos TCP.
 
-  ![venta_flujo](https://)
+  ![venta_flujo](img6-tema3.png)
 
 En la imagen tenermos una comunicación entre un emisor y un receptor, en el emisor la capa de aplicación envía 2KB a TCP y al ser su Maximum Segment Size de 2KB lo envía directamente al receptor en un sólo segmento. El segmento es recibido por el receptor, cuyo buffer de recepción es de 4KB y en ese momento se encuentra vacío, y tras almacenarlo en dicho buffer, envía un ACK de esos 2048 bytes indicando que le quedan libres otros 2KB en su ventana. El emisor, al no tener más información que enviar, no hace nada más que hasta que la aplicación vuelve a enviar información, 3KB, a TCP. Dicha infomación se divide en segmentos y TCP se dacuenta de que no puede enviarlo todo, pues sólo le han dado crédito para enviar 2KB, por tanto, envía esos 2KB y se queda esperando a poder enviar los 1024 bytes restantes. El receptor al recibir dicho segmento, lo almacena en su buffer y le envía la confirmación correspondiente indicando un crédito de 0 bytes, es decir, que no hay espacio en el buffer. En algún momento la aplicación del receptor preocesará 2KB del buffer y volverá a dejar espacio libre. En ese instante, el receptor envía un ACK duplicado al amisor con el mismo número de secuencia pero dándole 2KB de crédito para enviar, como el emisor tenía pendiente enviar 1KB, lo envía y finaliza la comunicación entre ambos.
 

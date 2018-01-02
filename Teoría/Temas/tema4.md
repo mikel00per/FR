@@ -66,7 +66,7 @@ De alguna forma hay que pasar los paquetes a la capa de enlace(capa de enlace no
 
 ### 4.1 Formato ARP
 
-  ![formato_ARP](http://)
+  ![formato_ARP](./img1-tema4.png)
 
 Lo primero que se indica en un paquete ARP es el tipo de protocolo de capa de enlace y a continuación el tipo de protocolo de capa de red, por ejemplo el protocolo Ethernet se identifica con un 1 y el protocolo IP con un 8 (H significa hardware y P, Protocol), tras eso, se indica la longitud de cada una de las direcciones en bytes. En primer lugar indicamos la dirección hardware del emisor, tras eso, indicamos la dirección IP del emisor y por último, indicamos las direcciones hardware e IP del receptor.
 
@@ -75,4 +75,4 @@ Es un protocolo de capa de enlace, que está encapsulado en IP, simplemente sign
 
 Los errores siempre se envían al origen, por ejemplo, cuando intentamos hacer ping a un ordenador que no existe y vemos un mensaje en terminal indicándonos que no existe dicha dirección.
 
-  ![ICMP](http://)
+  ![ICMP](./img2-tema4.png)
