@@ -6,7 +6,7 @@
 
 **¿Qué es el sistema de comunicación?** Es el conjunto de elementos y dispositicos involucrado en la transmisión de información entre dos puntos remotos, estos elementos son:
 
-  ![esquema_sis_comunicación](img1-tema1.png)
+  ![esquema_sis_comunicación](https://github.com/mikel00per/FR/blob/master/Teor%C3%ADa/Temas/Imagenes/img1-tema1.png)
 
   - **Fuente**: Dispositivo que genera los datos a transmitir. (P.ej. un
     teléfono o un PC)

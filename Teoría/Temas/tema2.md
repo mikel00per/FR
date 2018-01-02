@@ -183,7 +183,7 @@ Todo el dominio está asociado a un registro Resourse Record. Cada RR es una tup
 
 Existe una BD asociada de resolución inversa para traducir direcciones IP en nombres de dominio. Los formatos de los mensajes DNS son:
 
-  ![imagen](img1-tema2.png)
+  ![imagen](https://github.com/mikel00per/FR/blob/master/Teor%C3%ADa/Temas/Imagenes/img1-tema2.png)
 
 Nota: DNS se ofrece en el puerto 53 mediante UDP normalmente o TCP (para respuestas grandes > 512 bytes).
 
@@ -240,7 +240,7 @@ Caracteristicas del protocolo SMTP: (implenta dos programas)
   - Los mensajes deben estar codificados en ASCII de 7 bits → Extensiones MIME, que sirven para añadir otro tipo de codificación, sobre todo en los archivos adjuntos.
 
 Los pasos en el envio/recepción son:
-  ![envio/recepción correo](img2-tema2.png)
+  ![envio/recepción correo](https://github.com/mikel00per/FR/blob/master/Teor%C3%ADa/Temas/Imagenes/img2-tema2.png)
 
 ### 4.1 Otros protocolos usados
 
