@@ -6,7 +6,7 @@
 
   - **Capa de Red**: La base de la familia de protocolos es el nivel de Red (IP, Internet Protocol). Es un protocolo de conmutación de paquetes muy sencillo, de tipo datagrama, de forma que se pueda implementar en cualquier tipo de máquina. Existen dos versiones **IPv4**, **IPv6**.
     - **ICMP** (Internet Control Message Protocol): comunicación de mensajes entre nodos de la red
-    - **IGMP** (Internet Group Mangement Protocol): envío de mensajes a grupos de usuarios.
+  - **IGMP** (Internet Group Mangement Protocol): envío de mensajes a grupos de usuarios.
 
   - **Capa transporte**: Implementa protocolos extremo a extremo(entre nodo origen y destino de la información). Se definen dos protocolos:
     - **TCP** (Transmission Control Protocol):Es un protocolo orientado a la conexión con control de errores, se encarga también del control de flujo, fragmentado y reensamblado de flujos (garantiza el secuenciamiento)

@@ -105,9 +105,9 @@
 
 ## 1.2 Diseño y estandarización de las redes.
 Cuando se plantea el diseño de una red hay que resolver diversos problemas (transmisión de bits, acceso al medio, control de errores) a fin de conseguir una comunicación eficaz y transparente de los hots involucrados. Para solucionarlos de usan:
-  - **Paquetes**: unicades de información que identifican los datos necesarios que se necesitan entre hots. Estos apquetes incluyen cabeceras que tiene que ver con el punto siguiente..
-  - **Capas**: Equivales a agrupar en funciones o tareas relacionadas de modo que se minimixa el trasvase de información entre las capas. Esto permite conseguir un sistema más modular y flexible.
-  - **La estandarización**: El conjunto de capas y funciones asociadas se denomina modelo de referencia. Tanto desde el punto de vista del propietario o distibuidor como del consumidor interesa la existencia de estandares. Hemos de distinguir dos tiopos: facto y jure, los primeros se caracterizan por haber sido adoptados ampliamente en la práctica sin haber seguido para ello proceso alguno de estandarización, los jure sin embargo tienen a entidades formales detrás organismos reconocidos. También llamado modelo de referencia
+  - **Paquetes**: unidades de información que identifican los datos necesarios que se necesitan entre hots. Estos paquetes incluyen cabeceras que tiene que ver con el punto siguiente.
+  - **Capas**: Equivalente a agrupar en funciones o tareas relacionadas de modo que se minimixa el trasvase de información entre las capas. Esto permite conseguir un sistema más modular y flexible.
+  - **La estandarización**: El conjunto de capas y funciones asociadas se denomina modelo de referencia. Tanto desde el punto de vista del propietario o distibuidor como del consumidor interesa la existencia de estandares.
 
 Así nacen dos formas de ver los modelos de referencia:
   - **de facto**: han sido adptados sin haber seguido un proceso de estandarización normal.
@@ -117,8 +117,17 @@ Así nacen dos formas de ver los modelos de referencia:
 El modelo OSI (Open System Interconection) es utilizado por prácticamente la totalidad de las redes del mundo. Este modelo fue creado por el ISO (Organización Internacional de Normalización), y consiste en siete niveles o capas donde cada una de ellas define las funciones que deben proporcionar los protocolos con el propósito de intercambiar información entre varios sistemas. Esta clasificación permite que cada protocolo se desarrolle con una finalidad determinada, lo cual simplifica el proceso de desarrollo e implementación. Cada nivel depende de los que están por debajo de el, y a su vez proporciona alguna funcionalidad a los niveles superiores.
 
   - **Capa física**: En ella se llevan a cabo funciones relacionadas con la transmisión de datos desde el punto de vista de la gestión de características eléctricas, mecánicas y funcionales para una adecuada transferencia sobre el canal. Sería la tarjeta de red.
-  - **Capa de enlace**: Se implementa sobre la capa física y resuelve: le pone cabeceras a la información (para el inicio y el final de los mensajes), control de errores (redundancia) y control de flujo (reordenar los mensajes).
-  - **Capa de red**: Tiene que resolver el encaminamiento (si un paquete va a un sitio debe llegar a ese sitio), el control de congestión (evita la saturación de la capacidad de la subred) e interconexión de las redes (posibilita la transmisión de datos entre estaciones finales).
+  - **Capa de enlace**: los bits de datos se agrupan en bloques llamados tramas, tiene tres funciones:
+    - **delimitación de tramas**, para conocer el principio y el fin de un bloque de
+    datos y sincronizar al emisor y al receptor
+    - control de errores**, para conseguir que la información recibida se corresponda
+    con la enviada
+    - **control de flujo**, para evitar que el emisor sature el buffer de recepción del
+    destino debido a una velocidad u ocupación diferente de las dos partes.
+  - **Capa de red**: Tiene que tres funciones basicas:
+    - **encaminamiento**, cuyo objetivo es el establecimiento de la ruta (secuencia de líneas y nodos de conmutación en la subred) a seguir desde un origen hasta un destino.
+    - **control de congestión**, evita la saturación de la capacidad de la subred como consecuencia de un elevado tráfico.
+    - **interconexión de redes**, posibilita la transmisión de datos entre estaciones finales situadas en redes distintas.
   - **Capa de transporte**: Mismas funciones de la capa de red pero ve los numerosos caminos de conexión como una sola entidad donde ya se ha resuelto esto delimitando así la gestión unicamente entre dos hots.
   - **Capa de sesión**: turno de palabra, cuando habla uno y cuando habla el otro.
   - **Capa de presentación**: capa encargada de la representación de los datos que viene de la capa superior, por ejemplo atraves del cifrado o codificación de los mismo. Esta capa permite recolver las heterogeneidades respecto de la diferencia de representación interna de la información en cada uno de los hots extremos.
@@ -138,8 +147,8 @@ TCP/IP es una red software, ya que puede implementarse sobre cualquier tecnolog�
 Dadas dos capas adyacentes, N y N+1, la capa inferior se denomina proveedora de servicios y la superior usuarioa de servicios, por cuanto que la capa N ofrece una sere de funciones o prestaciones (servicios) transparentes a la superior.
 
 Existen, pues, dos tipos de comunicación entre un emisor y un receptor:
-  - **Real o vertical**: Es el flujo que sigue la informaciń entre el emisor y el receptor: intercambio de datos entre capas adyacentes, en sentido descendente (aplicación -> fisica) en el emisor y ascendente (fisica -> aplicación) enell receptor.
-  - **Virtual u horizontal**: Es la comunicación observada desde el punto de vista de las entidades paritarias. Es decir, la realización de una función dada implica la colavoración de las entidades pares emisora y receptora. En cada capa, salvo la fisica, se añade una serie de información suplementaria, llamda cabecera destinada a permitir una comunicación coherente entre las entidades paritarias involucradas.
+  - **Real o vertical**: Es el flujo que sigue la informaciń entre el emisor y el receptor: intercambio de datos entre capas adyacentes, en sentido descendente (aplicación -> fisica) en el emisor y ascendente (fisica -> aplicación) en el receptor.
+  - **Virtual u horizontal**: Es la comunicación observada desde el punto de vista de las entidades paritarias. Es decir, la realización de una función dada implica la colaboración de las entidades pares emisora y receptora. En cada capa, salvo la fisica, se añade una serie de información suplementaria, llamda cabecera destinada a permitir una comunicación coherente entre las entidades paritarias involucradas.
 
 En relación con la comunicación horizontal, un protocolo es el conjunto de reglas y convenciones que se tienen que aplicar en una comunicación entre dos entidades. A las capas y protocolos asociados se les denominan **arquitectura de red**. En este sentido OSI no es una arquitectura porque no se definen los protocolos, mientras que TCP/IP sí es una arquitectura, ya que en cada capa se conocen los protocolos que se tienen que tener en cuenta. La especificación en capas de una arquitectura de red se conoce como pila de protocolos.
 
@@ -150,7 +159,8 @@ Los servicios ofrecidos por cada una de las capas pueden ser de dos tipos:
   - **Confirmado**: el host emisor tiene constancia de que al host receptor le ha legado el paquete.
   - **No confirma**: Lo contrario.
 
-### 1.4 Internet aquitectura y direccionamiento
+
+### 1.4 Internet, aquitectura y direccionamiento
   - **Arquitectura**: Existen varios tipos de red, estableciendo una topología jerárquica:
     1. **Intranets** (Ethernet) del usuario: zona pública+zona privada. Se refieren a  las redes locales de cada usuario donde se incluyen direcciones privadas  para su subred local y direcciones públicas para acceder a la red.  
     2. **Redes de acceso**: xDSL (toda la familia DSL, por ejemplo, ADSL), RDSI, FTTH  (Fibre To The Home (fibra óptica)), etc del ISP.  
@@ -161,4 +171,4 @@ Los puntos neutros son puntos en los cuales las distintas redes ISP se intercone
   - **Direccionamiento hhtp**: Cuando queremos acceder a una página web, se forma un paquete de datos con una determinada información en las distintas capas que se iban trasmitiendo entre los distintos nodos a través de internet hasta llegar al destino, devolviendo la información requerida. El direccionamiento dependiendo se la capa se hace de distintas formas:
     - **Nombre del domino**: En la capa de aplicación, para direccionar se usa el nombr del dominio debido a que la capa de aplicación es justo la que intercciona con nosotros y un nombre del domino es más facil de recordar.
     - **Dir. IP**: Se localiza en la capa de red e identifica a los host, tanto fuente ocmo destino.
-    - **Puertos**: Un puerto sirve para contestar peticiones que nos envien otros dispositivos. Hay puertos de proposito específico, dinámicos, etc. Se localizan en la capa de transporte. 
+    - **Puertos**: Un puerto sirve para contestar peticiones que nos envien otros dispositivos. Hay puertos de proposito específico, dinámicos, etc. Se localizan en la capa de transporte.
