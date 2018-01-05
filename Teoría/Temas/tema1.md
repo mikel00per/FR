@@ -158,7 +158,7 @@ Los servicios ofrecidos por cada una de las capas pueden ser de dos tipos:
 
 Los puntos neutros son puntos en los cuales las distintas redes ISP se interconectan  para intercambiar tráfico.
 
-  - **Direccionamiento**: Cuando queremos acceder a una página web, se forma un paquete de datos con una determinada información en las distintas capas que se iban trasmitiendo entre los distintos nodos a través de internet hasta llegar al destino, devolviendo la información requerida. EL direccionamiento dependiendo se la capa se hace de distintas formas:
-    - **Nombre del domino**:
-    - **Dir. IP**:
-    - **Puertos**:
+  - **Direccionamiento hhtp**: Cuando queremos acceder a una página web, se forma un paquete de datos con una determinada información en las distintas capas que se iban trasmitiendo entre los distintos nodos a través de internet hasta llegar al destino, devolviendo la información requerida. El direccionamiento dependiendo se la capa se hace de distintas formas:
+    - **Nombre del domino**: En la capa de aplicación, para direccionar se usa el nombr del dominio debido a que la capa de aplicación es justo la que intercciona con nosotros y un nombre del domino es más facil de recordar.
+    - **Dir. IP**: Se localiza en la capa de red e identifica a los host, tanto fuente ocmo destino.
+    - **Puertos**: Un puerto sirve para contestar peticiones que nos envien otros dispositivos. Hay puertos de proposito específico, dinámicos, etc. Se localizan en la capa de transporte. 
